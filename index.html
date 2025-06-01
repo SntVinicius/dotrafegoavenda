@@ -1,0 +1,168 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Do Tráfego à Venda - Transforme Cliques em Lucro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-b from-blue-400 to-blue-600 text-white py-16 text-center">
+        <div class="max-w-4xl mx-auto px-4 flex flex-col items-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Transforme Cliques em Lucro com o Poder do Tráfego Pago!</h1>
+            <p class="text-xl mb-6">Descubra os <strong>segredos</strong> que vão <strong>"Do Tráfego à Venda"</strong> e aprenda a criar campanhas que geram <strong>vendas reais</strong>!</p>
+            <div class="bg-white p-4 rounded-lg shadow-lg mb-6">
+                <img src="https://static.wixstatic.com/media/0a493f_bf9edc38a1c84c2b904bd2593c7992c2~mv2.png" alt="Capa do eBook Do Tráfego à Venda" class="mx-auto w-64 md:w-80 rounded-lg">
+            </div>
+            <a href="#buy-now" class="bg-yellow-400 text-black font-semibold py-3 px-6 rounded-lg hover:bg-yellow-500 transition">Garanta o eBook Agora de <span class="line-through text-black">R$79,90</span> por apenas <span class="text-red-500 font-bold">R$49,90!</span></a>
+            <p id="oferta" class="mt-4 text-sm"><span class="text-white font-bold">*OFERTA VALIDA POR TEMPO LIMITADO*</span></p>
+        </div>
+    </section>
+
+    <!-- Benefícios -->
+    <section class="py-12 bg-white">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-8">Por que você precisa deste eBook?</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="p-6 bg-gray-50 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2">Crie Campanhas Lucrativas</h3>
+                    <p>Configure anúncios no Google, Facebook, Instagram e TikTok que atraem o público certo e geram ROI positivo.</p>
+                </div>
+                <div class="p-6 bg-gray-50 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2">Otimize Conversões</h3>
+                    <p>Domine landing pages, CTAs e remarketing para transformar visitantes em clientes pagantes.</p>
+                </div>
+                <div class="p-6 bg-gray-50 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2">Meça e Escala</h3>
+                    <p>Monitore KPIs (CPC, CTR, ROI) e escale suas campanhas para lucros consistentes.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Prova Social -->
+    <section class="py-12 bg-gray-200">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-3xl font-bold mb-8">O que estão dizendo sobre o eBook?</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="p-6 bg-white rounded-lg shadow-md">
+                    <p class="italic">"Este eBook mudou minha forma de fazer anúncios! Consegui dobrar minhas vendas em apenas 2 semanas!"</p>
+                    <p class="mt-4 font-semibold">- Ana Clara, Empreendedora de E-commerce</p>
+                </div>
+                <div class="p-6 bg-white rounded-lg shadow-md">
+                    <p class="italic">"As dicas de remarketing foram um divisor de águas. Recuperei 30% das compras abandonadas!"</p>
+                    <p class="mt-4 font-semibold">- João Silva, Dono de Loja Online</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Conteúdo do eBook -->
+    <section class="py-12 bg-white">
+        <div class="max-w-5xl mx-auto px-4">
+            <h2 class="text-3xl font-bold mb-8 text-center">O que você vai encontrar no eBook?</h2>
+            <div class="flex flex-col md:flex-row gap-6">
+                <div class="md:w-1/3">
+                    <div class="bg-white p-4 rounded-lg shadow-lg">
+                        <img src="https://static.wixstatic.com/media/0a493f_bf9edc38a1c84c2b904bd2593c7992c2~mv2.png" alt="Capa do eBook Do Tráfego à Venda" class="mx-auto w-64 md:w-80 rounded-lg">
+                    </div>
+                </div>
+                <div class="md:w-2/3">
+                    <ul class="list-disc list-inside text-lg space-y-4">
+                        <li><strong>Fundamentos do Tráfego Pago</strong>: Entenda como funcionam Google Ads, Facebook Ads, TikTok Ads e mais.</li>
+                        <li><strong>Segmentação de Público</strong>: Crie personas e use audiências personalizadas para atingir clientes ideais.</li>
+                        <li><strong>Criação de Anúncios</strong>: Dicas para imagens, vídeos e copywriting que convertem.</li>
+                        <li><strong>Landing Pages Otimizadas</strong>: Estruture páginas que transformam cliques em vendas.</li>
+                        <li><strong>Remarketing Estratégico</strong>: Reconquiste leads com anúncios personalizados.</li>
+                        <li><strong>KPIs e Otimização</strong>: Monitore métricas e ajuste campanhas para lucros consistentes.</li>
+                        <li><strong>Casos de Sucesso</strong>: Exemplos reais de campanhas que geraram resultados expressivos.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Oferta e Urgência -->
+    <section class="py-12 bg-gradient-to-b from-blue-400 to-blue-600 text-white text-center">
+        <div class="max-w-4xl mx-auto px-4">
+            <h2 class="text-3xl font-bold mb-4">Não Perca Esta Oportunidade Única!</h2>
+            <p class="text-xl mb-6">Por apenas <strong>R$49,90</strong>, tenha acesso ao guia definitivo para transformar tráfego pago em vendas reais! <br> *Oferta por tempo limitado – garanta antes que o preço retorne para R$79,90!*</p>
+            <a id="buy-now" href="https://pay.kirvano.com/3661fc39-4acb-483b-a7fa-7d7c1b042649" class="bg-yellow-400 text-black font-semibold py-3 px-6 rounded-lg hover:bg-yellow-500 transition">Comprar Agora!</a>
+        </div>
+    </section>
+
+    <!-- FAQs -->
+    <section class="py-12 bg-white">
+        <div class="max-w-4xl mx-auto px-4">
+            <h2 class="text-3xl font-bold mb-8 text-center">Perguntas Frequentes</h2>
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-xl font-semibold">Este eBook é para iniciantes?</h3>
+                    <p>Sim! O eBook é ideal para iniciantes e intermediários, com explicações claras e exemplos práticos para todos os níveis.</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold">Posso aplicar as estratégias em qualquer negócio?</h3>
+                    <p>Absolutamente! As técnicas são adaptáveis para e-commerces, serviços B2B/B2C, infoprodutos e negócios locais.</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold">Quanto tempo leva para ver resultados?</h3>
+                    <p>Com as estratégias certas, você pode começar a ver resultados em poucos dias, especialmente com tráfego pago!</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold">O eBook vem com suporte?</h3>
+                    <p>Você terá acesso ao conteúdo digital completo e, se precisar, pode entrar em contato com nossa equipe para dúvidas.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer CTA -->
+    <section class="py-12 bg-gray-800 text-white text-center">
+        <div class="max-w-4xl mx-auto px-4">
+            <h2 class="text-3xl font-bold mb-4">Pronto para Escalar Suas Vendas?</h2>
+            <p class="text-xl mb-6">Não deixe o tráfego do seu site ser apenas números. Transforme cliques em lucros com o eBook <strong>"Do Tráfego à Venda"</strong>!</p>
+            <a href="https://pay.kirvano.com/3661fc39-4acb-483b-a7fa-7d7c1b042649" class="bg-yellow-400 text-black font-semibold py-3 px-6 rounded-lg hover:bg-yellow-500 transition">Garanta Seu eBook Agora!</a>
+        </div>
+    </section>
+</body>
+</html>
